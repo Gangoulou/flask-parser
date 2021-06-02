@@ -1,0 +1,33 @@
+version: "3.3"
+
+services:
+  parser:
+    build:
+      context: .
+    ports:
+      - 5000:5000
+    hostname: 0.0.0.0
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: 'python -u rabbitConsumer.py'
+    depends_on:
+      - db
+    hostname: 0.0.0.0
+
+  db:
+    platform: linux/x86_64
+    image: mariadb:10.5.8
+    restart: always
+    environment:
+      MYSQL_DATABASE: main
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - .dbdata:/var/lib/mysql
+    ports:
+      - 33067:3306
+    hostname: 0.0.0.0
